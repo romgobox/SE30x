@@ -1,7 +1,7 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 import time
-import datetime
+from datetime import datetime, timedelta
 
 def chSim(sim):
     sim = sim
@@ -9,9 +9,36 @@ def chSim(sim):
     return sim
     
 def udate():
-    return datetime.datetime.now().strftime("%d.%m.%y %H:%M:%S.%f")
+    return datetime.now().strftime("%d.%m.%y %H:%M:%S.%f")
 
 def HexToChr(hexList=[]):
     chrList = [chr(int(x, 16)) for x in hexList]
     chrString = ''.join(chrList)
     return chrString
+
+def dateList(depth):
+    ''' Метод возвращает список дат на заданную глубину.
+        Используется при опросе профиля мощности и 
+        зафиксированных показаний на начало суток
+    '''
+    dateList = []
+    nextDay = datetime.now()
+    dateList.append(nextDay.strftime('%d.%m.%y'))
+    for i in xrange(depth):
+        nextDay = (nextDay - timedelta(days=1))
+        dateList.append(nextDay.strftime('%d.%m.%y'))
+    return dateList
+
+def monthList(depth):
+    ''' Метод возвращает список месяцев на заданную глубину.
+        Используется при опросе зафиксированных показаний на начало месяца
+    '''
+    monthList = []
+    nextMonth = datetime.now()
+    month = '%d.%s' % (nextMonth.month, str(nextMonth.year)[-2:])
+    monthList.append(month)
+    for i in xrange(depth):
+        nextMonth = datetime.strptime('01.'+nextMonth.strftime('%m.%y'), '%d.%m.%y') - timedelta(days=1) 
+        month = '%d.%s' % (nextMonth.month, str(nextMonth.year)[-2:])
+        monthList.append(month)
+    return monthList
