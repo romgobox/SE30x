@@ -217,20 +217,12 @@ class SE30X(object):
         return chrString
     
     def whNum(self, whAdr=0):
-        """Method is intended to read the serial number of the metering device
-        
-        Sends command to read the serial number of the metering device
-        
+        """ Метод предназначен для чтения серийного номера ПУ
         Args:
-        
-            whAdr (int): the metering device address, for Mercury 230 from 1 to 240, 0 corresponds to the address of any device on the bus.
-        
+            whAdr (int): сетевой адрес ПУ.
         Returns:
-        
-            str: device serial number as a string.
-        
+            str: серийный номер ПУ в виде строки.
         Examples:
-        
             >>> SE30X.whNum (whAdr = 137)
             009217067001137
         """
