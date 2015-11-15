@@ -1,6 +1,9 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-
+"""
+release-0.1:
+    инициализация
+"""
 import subprocess
 import time
 from datetime import datetime, timedelta
