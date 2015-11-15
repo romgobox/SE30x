@@ -1,6 +1,9 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
-
+"""
+release-0.1:
+    инициализация
+"""
 import subprocess
 import time
 from datetime import datetime, timedelta
@@ -14,11 +17,12 @@ from utils import chSim, udate, HexToChr
 
 
 class SE30X(object):
-    """The class implements the basic protocol commands metering device Mercury 230
+    """ Класс реализующий протокол приборов учета (ПУ) Энергомера СЕ301(303)
     
     Args:
     
-        channel (object): an instance of an object that implements the transfer of information (direct channel, GSM (CSD), TCP / IP)
+        channel (object): объект канала передачи данных
+                            прямой serial, GSM, TCP/IP
     """
     def __init__(self, channel):
         self.channel = channel
@@ -32,24 +36,16 @@ class SE30X(object):
         return self.channel.TXRX(cmd, crcString, crcCheck, getRX, ansChLine)
 
     def whAuth(self, whAdr=0, whPass=777777):
-        """Method for authorization in the metering device
+        """ Метод предназначен для авторизации в ПУ
         
-        Sends command authorization in the metering device
-        
-        Args:
-        
-            whAdr (int): the metering device address, for Mercury 230 from 1 to 240, 0 corresponds to the address of any device on the bus.
-            whPass (int): password metering device, (default value: 111111).
-        
+        Args:        
+            whAdr (int): сетевой адрес ПУ
+            whPass (int): пароль ПУ (по-умолчанию: 777777).
         Returns:
-        
-            bool: True, if the authentication is successful, False in any other case.
-        
+            bool: True, если авторизация успешна, False, в любом другом случае.
         Examples:
-        
             >>> SE30X.whAuth (whAdr = 145, whPass = 777777)
             True
-            
             >>> SE30X.whAuth (whAdr = 145, whPass = 777776)
             False
         """
@@ -80,22 +76,14 @@ class SE30X(object):
         return auth
     
     def whLogOut(self, whAdr):
-        """Method to close the connection with the meter
-        
-        Sends command to close the connection with the metering device
+        """ Метод предназначен для разрыва сессии с ПУ
         
         Args:
-        
-            whAdr (int): the metering device address, for Mercury 230 from 1 to 240, 0 corresponds to the address of any device on the bus.
-            
-        
+            whAdr (int): сетевой адрес ПУ.        
         Returns:
-        
-            Nothing.
-        
+            Метод ничего не возвращает.
         Examples:
-        
-            >>>SE30X.whLogOut (whAdr = 145)
+            >>>SE30X.whLogOut(whAdr = 145)
         """
         
         logOutCmd = '\x01\x42\x30\x03\x75'
@@ -232,20 +220,12 @@ class SE30X(object):
         return chrString
     
     def whNum(self, whAdr=0):
-        """Method is intended to read the serial number of the metering device
-        
-        Sends command to read the serial number of the metering device
-        
+        """ Метод предназначен для чтения серийного номера ПУ
         Args:
-        
-            whAdr (int): the metering device address, for Mercury 230 from 1 to 240, 0 corresponds to the address of any device on the bus.
-        
+            whAdr (int): сетевой адрес ПУ.
         Returns:
-        
-            str: device serial number as a string.
-        
+            str: серийный номер ПУ в виде строки.
         Examples:
-        
             >>> SE30X.whNum (whAdr = 137)
             009217067001137
         """
