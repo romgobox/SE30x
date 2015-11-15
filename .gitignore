@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 
+# Ignoring test files
+*test*
+
 # C extensions
 *.so
 
