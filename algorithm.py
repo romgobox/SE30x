@@ -63,7 +63,7 @@ class Algorithm(object):
                         else:
                             meter.fixDayValue[date] = None
                 else:
-                    print 'Cant auth in WH ' + meter
+                    print 'Cant auth in WH'
             self.channel.terminate()
 
             # return fixedValuesDict
