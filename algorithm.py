@@ -53,24 +53,20 @@ class Algorithm(object):
             return check
 
         def getFixedValues(self, depth):
-            fixedValuesDict = {}
             for meter in self.meters:
-                fixedValuesDict[meter.adr] = []
                 if self.authCheckNum(meter.adr, meter.password, meter.number):
                     dates = dateList(depth)
                     for date in dates:
                         value = self.protocol.whFixDay(meter.adr, date=date)
                         if value:
-                            valueDict = {date:value}
-                            fixedValuesDict[meter.adr].append(valueDict)
+                            meter.fixDayValue[date] = value 
                         else:
-                            valueDict = {date:None}
-                            fixedValuesDict[meter.adr].append(valueDict)
+                            meter.fixDayValue[date] = None
                 else:
-                    fixedValuesDict[meter.adr] = None
+                    print 'Cant auth in WH ' + meter
             self.channel.terminate()
 
-            return fixedValuesDict
+            # return fixedValuesDict
                     
 
                 

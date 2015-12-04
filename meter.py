@@ -33,3 +33,7 @@ class Meter(object):
             self.adr = adr
             self.number = number
             self.password = password
+            self.fixDayValue = {}
+
+        def __repr__(self):
+            return '<meter adr: %s, number: %s>' % (str(self.adr), self.number)
