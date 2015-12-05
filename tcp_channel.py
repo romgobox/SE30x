@@ -18,16 +18,19 @@ from CRC import CRC_SE3xx
     
 class TCPChannel(object):
     
-    def __init__(self, whTimeout = 5, attempt = 3, whRXTimeout=0.5):
+    def __init__(self, address, port, whTimeout = 5, attempt = 3, whRXTimeout=0.5):
         
         self.whTimeout = whTimeout
         self.attempt = attempt
         self.whRXTimeout = whRXTimeout
+        self.address = address
+        self.port = port
         
         self.CRC = CRC_SE3xx()
                 
-    def connect(self, address, port, connect_attempt=3):
-        
+    # def connect(self, address, port, connect_attempt=3):
+    def connect(self):
+        connect_attempt = self.attempt
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             #self.sock.settimeout(self.whTimeout)
@@ -35,9 +38,9 @@ class TCPChannel(object):
             logging.error(u'Не удалось создать сокет! %s' % e)
             self.terminate()
         while connect_attempt>0:
-            logging.debug(u'Устанавливаем соединение: %s:%s' % (address, port))
+            logging.debug(u'Устанавливаем соединение: %s:%s' % (self.address, self.port))
             try:
-                connection = self.sock.connect((address, int(port)))
+                connection = self.sock.connect((self.address, int(self.port)))
                 connect_attempt = 0
                 logging.debug(u'Соединение установлено!')
                 return True

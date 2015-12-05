@@ -24,7 +24,7 @@ class SE30X(object):
         channel (object): объект канала передачи данных
                             прямой serial, GSM, TCP/IP
     """
-    def __init__(self, channel):
+    def __init__(self, channel=None):
         self.channel = channel
         self.SOH='\x01'
         self.STX='\x02'
