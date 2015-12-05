@@ -29,11 +29,16 @@ conn = {
 class Meter(object):
         """Класс прибора учета"""
 
-        def __init__(self, adr, number, password):
+        def __init__(self, adr, number, password, parameters):
             self.adr = adr
             self.number = number
             self.password = password
             self.fixDayValue = {}
+            self.ppValue = {}
+            self.parameters = parameters or {
+                'fixDay':{'depth': 5},
+                'ppValue':{'depth':5},
+            }
 
         def __repr__(self):
             return '<meter adr: %s, number: %s>' % (str(self.adr), self.number)
