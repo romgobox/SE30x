@@ -35,7 +35,7 @@ class SE30X(object):
     def cmdWR(self, cmd, crcString='', crcCheck=True, getRX=True, ansChLine=''):
         return self.channel.TXRX(cmd, crcString, crcCheck, getRX, ansChLine)
 
-    def whAuth(self, whAdr=0, whPass=777777):
+    def whAuth(self, whAdr=0, whPass='777777'):
         """ Метод предназначен для авторизации в ПУ
         
         Args:        

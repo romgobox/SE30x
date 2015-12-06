@@ -35,16 +35,12 @@ conn = {
 class Algorithm(object):
     """Класс прибора учета"""
 
-    def __init__(self, protocol, channel, meters, params={}):
+    def __init__(self, protocol, channel, meters):
         self.channel = channel
         self.protocol = protocol
         self.protocol.channel = self.channel
         self.meters = meters
         self.connection = self.channel.connect()
-        self.params = params or {
-                    'fixDay':False,
-                    'ppValue':False,
-                    }
 
     def runAlgorithm(self):
         for meter in self.meters:

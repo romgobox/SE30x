@@ -29,7 +29,8 @@ conn = {
 class Meter(object):
         """Класс прибора учета"""
 
-        def __init__(self, adr, number, password, parameters):
+        def __init__(self, id, adr, number, password, parameters):
+            self.id = id
             self.adr = adr
             self.number = number
             self.password = password
