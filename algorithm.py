@@ -48,15 +48,14 @@ class Algorithm(object):
             if self.authCheckNum(meter.adr, meter.password, meter.number):
                 if params.get('fixDay'):
                     depth = params['fixDay']['depth']
-                    dates = dateList(depth)
-                    self.checkValInDB(dates)
+                    # dates = dateList(depth)
+                    dates = meter.checkValInDB(depth=depth, param_num=1)
                     self.getFixedValues(meter, dates)
                 if params.get('ppValue'):
                     depth = params['ppValue']['depth']
-                    dates = dateList(depth)
-                    self.checkValInDB(dates)
+                    # dates = dateList(depth)
+                    dates = self.checkValInDB(dates)
                     self.getPPValues(meter, dates)
-
             self.protocol.whLogOut(meter.adr)
         self.channel.terminate()
 
