@@ -29,6 +29,22 @@ def dateList(depth):
         dateList.append(nextDay.strftime('%d.%m.%y'))
     return dateList
 
+def dateListPP(depth):
+    dateList = []
+    Now = datetime.now()
+    if Now.minute > 30:
+        firstVal = Now.strftime('%d.%m.%y %H:')+'30:00'
+        dateList.append(firstVal)
+        nextVal = datetime.strptime(firstVal, '%d.%m.%y %H:%M:%S')
+    else:
+        firstVal = Now.strftime('%d.%m.%y %H:')+'00:00'
+        dateList.append(firstVal)
+        nextVal = datetime.strptime(firstVal, '%d.%m.%y %H:%M:%S')
+    for i in xrange(depth):
+        nextVal = nextVal - timedelta(minutes=30)
+        dateList.append(nextVal.strftime('%d.%m.%y %H:%M:%S'))
+    return dateList
+
 def monthList(depth):
     ''' Метод возвращает список месяцев на заданную глубину.
         Используется при опросе зафиксированных показаний на начало месяца

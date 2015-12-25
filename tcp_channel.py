@@ -74,25 +74,31 @@ class TCPChannel(object):
         if getRX:
             while True and attempts>0:
                 time.sleep(self.whRXTimeout)
-                ansChr += self.RX()
+                ansChr = self.RX()
                 ansBuf += ansChr
                 if self.RX_check(ansBuf, crcCheck, ansChLine):
+                    # print '*******************************************************'
+                    # print ansBuf
+                    # print '*******************************************************'
                     attempts = 0
                     ansHex += [chSim(hex(ord(x))[2:]) for x in ansBuf]  #
                     answer = ansHex #!
                     cmdRX = [ansHex, ansBuf, len(ansHex)]  #
                     logging.debug(u'RX <<< %s <<<>>> %s [%s]' % (" ".join(cmdRX[0]), cmdRX[1], str(cmdRX[2])))
+                    break
                 else:
                     attempts -= 1
-                    ansHex += [chSim(hex(ord(x))[2:]) for x in ansChr]  #
-                    cmdRX = [ansHex, ansChr, len(ansHex)]
-                    logging.debug(u'RX <<< %s <<<>>> %s [%s]' % (" ".join(cmdRX[0]), cmdRX[1], str(cmdRX[2])))
-                    ansChr=''#!!!!!!!!!!!!!
+                    # ansHex += [chSim(hex(ord(x))[2:]) for x in ansChr]  #
+                    # cmdRX = [ansHex, ansChr, len(ansHex)]
+                    # logging.debug(u'RX <<< %s <<<>>> %s [%s]' % (" ".join(cmdRX[0]), cmdRX[1], str(cmdRX[2])))
+                    # ansChr=''#!!!!!!!!!!!!!
                     
                     if attempts>0:
                         logging.error(u'Осталось попыток запроса: %d' % attempts)
                     else:
                         logging.error(u'Количество попыток запроса исчерпано!')
+                        break
+
             '''
             if self.RX_check(ansChr, crcCheck, ansChLine):
                 attempts = 0

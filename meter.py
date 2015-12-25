@@ -60,7 +60,23 @@ class Meter(object):
                 con = sqlite3.connect(DATABASE)
                 cur = con.cursor()
                 cur.execute(sql)
-                con.commit()
+        con.commit()
+
+    def saveppValues(self):
+        for date, value in self.ppValue.items():
+            if value:
+                # dateP = datetime.strptime(date, '%d.%m.%y')
+                # dateval = datetime.strftime(dateP, '%d.%m.%Y %H:%M:%S')
+                dateval = date
+                now = datetime.now()
+                datercv = datetime.strftime(now, '%d.%m.%Y %H:%M:%S')
+                sql = '''
+                INSERT INTO meter_values VALUES(Null, {id}, 2, '{datercv}', '{dateval}', {value})
+                '''.format(id=self.id, datercv=datercv, dateval=dateval, value=value)
+                con = sqlite3.connect(DATABASE)
+                cur = con.cursor()
+                cur.execute(sql)
+        con.commit()
 
     def checkValInDB(self, depth, param_num):
         datesList = []

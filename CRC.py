@@ -18,11 +18,9 @@ class CRC_SE3xx(object):
         if bccString == '':
             return ''
         else:
-            #import pdb; pdb.set_trace()
             sum = 0
             for i in bccString:
                 sum = sum + ord(i)
-            print 'SUMM: ' + str(hex(sum)[-2:])
             if int(hex(sum)[-2:], 16)>127:
                 return chr(int(hex(sum)[-2:], 16) - 128)
             else:
