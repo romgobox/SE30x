@@ -7,7 +7,7 @@ from datetime import datetime
 from protocol import SE30X
 from tcp_channel import TCPChannel as TCP
 # from meter import Meter
-from utils import dateList
+from utils import dateList, dateListPP
 
 # whs = [
     
@@ -48,12 +48,12 @@ class Algorithm(object):
             if self.authCheckNum(meter.adr, meter.password, meter.number):
                 if params.get('fixDay'):
                     depth = params['fixDay']['depth']
-                    dates = meter.checkValInDB(depth=depth, param_num=1)
+                    dates = meter.checkValInDB(depth)
                     self.getFixedValues(meter, dates)
                 if params.get('ppValue'):
                     depth = params['ppValue']['depth']
-                    # dates = dateList(depth)
-                    dates = meter.checkValInDB(depth=depth, param_num=2)
+                    meter.getppValueMap(depth)
+                    dates = dateList(depth)
                     self.getPPValues(meter, dates)
             self.protocol.whLogOut(meter.adr)
         self.channel.terminate()
@@ -69,12 +69,6 @@ class Algorithm(object):
             check = False
         return check
 
-    def checkValInDB(self, dates):
-        ''' При наличии действующей БД проверяет имеющиеся в ней значения,
-            для того чтобы не запрашивать лишней информации с прибора учета
-        '''
-        pass
-
     def getFixedValues(self, meter, dates):
         for date in dates:
             value = self.protocol.whFixDay(meter.adr, date=date)
@@ -82,6 +76,8 @@ class Algorithm(object):
                 meter.fixDayValue[date] = value 
             else:
                 meter.fixDayValue[date] = None
+        # if meter.fixDayValue:
+        #     meter.saveFixDayValues()
 
     def getPPValues(self, meter, dates):
         for date in dates:
@@ -90,5 +86,7 @@ class Algorithm(object):
                 meter.ppValue.update(value)
             else:
                 meter.ppValue[date] = None
+        # if meter.ppValue:
+        #     meter.saveppValues()
 
                 

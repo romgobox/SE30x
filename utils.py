@@ -18,8 +18,7 @@ def HexToChr(hexList=[]):
 
 def dateList(depth):
     ''' Метод возвращает список дат на заданную глубину.
-        Используется при опросе профиля мощности и 
-        зафиксированных показаний на начало суток
+        Используется при опросе зафиксированных показаний на начало суток
     '''
     dateList = []
     nextDay = datetime.now()
@@ -30,6 +29,7 @@ def dateList(depth):
     return dateList
 
 def dateListPP(depth):
+    depth = depth * 48
     dateList = []
     Now = datetime.now()
     if Now.minute > 30:
