@@ -15,6 +15,11 @@ logging.basicConfig(format = u'%(filename)s[LINE:%(lineno)d]# %(levelname)-4s [%
 
 from utils import chSim, udate, HexToChr
 
+class Protocol(object):
+    """Protocol Factory"""
+    @staticmethod
+    def get_protocol(protocol):
+        if protocol == 'SE30X': return SE30X()
 
 class SE30X(object):
     """ Класс реализующий протокол приборов учета (ПУ) Энергомера СЕ301(303)

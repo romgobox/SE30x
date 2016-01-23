@@ -5,8 +5,6 @@ from datetime import datetime
 import sqlite3
 
 
-from protocol import SE30X
-from tcp_channel import TCPChannel as TCP
 from utils import dateList, dateListPP
 
 DATABASE = 'se.db'
@@ -14,11 +12,14 @@ DATABASE = 'se.db'
 class Meter(object):
     """Класс прибора учета"""
 
-    def __init__(self, id, adr, number, password, parameters):
+    def __init__(self, id, adr, number, password, protocol, channel, parameters):
         self.id = id
         self.adr = adr
         self.number = number
         self.password = password
+        self.protocol = protocol
+        self.channel = channel
+        self.protocol.channel = self.channel
         self.fixDayValue = {}
         self.ppValue = {}
         self.ppValueMap = []
@@ -29,6 +30,36 @@ class Meter(object):
 
     def __repr__(self):
         return '<meter adr: %s, number: %s>' % (str(self.adr), self.number)
+
+    def authCheckNum(self, ):
+        check = False
+        if self.protocol.whAuth(self.adr, self.password):
+            if self.protocol.whNum(self.adr) == self.number:
+                check = True
+        else:
+            check = False
+        return check
+
+    def logOut(self):
+        self.protocol.whLogOut(self.adr)
+
+    def getFixedValues(self, dates):
+        for date in dates:
+            value = self.protocol.whFixDay(self.adr, date=date)
+            if value:
+                self.fixDayValue[date] = value
+            else:
+                self.fixDayValue[date] = None
+        # if meter.fixDayValue:
+        #     meter.saveFixDayValues()
+
+    def getPPValues(self, dates):
+        for date in dates:
+            value = self.protocol.whPPValue(self.adr, date=date)
+            if value:
+                self.ppValue.update(value)
+            else:
+                self.ppValue[date] = None
 
     def saveFixDayValues(self):
         con = sqlite3.connect(DATABASE)
@@ -98,7 +129,7 @@ class Meter(object):
                 meter_id={id} AND
                 datetime_value='{date}' AND
                 param_num={param_num}
-            '''.format(id=self.id, date=dateval, param_num=param_num)
+            '''.format(id=self.id, date=dateval, param_num=1)
             cur.execute(sql)
             con.commit()
             for row in cur.fetchall():
