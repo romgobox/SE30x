@@ -27,8 +27,8 @@ class TCPChannel(object):
         self.port = port
         
         self.CRC = CRC_SE3xx()
-                
-    # def connect(self, address, port, connect_attempt=3):
+
+
     def connect(self):
         connect_attempt = self.attempt
         try:
@@ -66,20 +66,15 @@ class TCPChannel(object):
         ansHex1 = []
         ansChr=''
         ansBuf = ''
-        
         attempts = self.attempt
         cmdTX = self.TX(cmd + self.CRC.calculate(crcString))
         logging.debug(u'TX >>> %s <<<>>> %s [%d]' % (" ".join(cmdTX[0]), cmdTX[1], cmdTX[2]))
-        
         if getRX:
             while True and attempts>0:
                 time.sleep(self.whRXTimeout)
                 ansChr = self.RX()
                 ansBuf += ansChr
                 if self.RX_check(ansBuf, crcCheck, ansChLine):
-                    # print '*******************************************************'
-                    # print ansBuf
-                    # print '*******************************************************'
                     attempts = 0
                     ansHex += [chSim(hex(ord(x))[2:]) for x in ansBuf]  #
                     answer = ansHex #!
@@ -88,26 +83,11 @@ class TCPChannel(object):
                     break
                 else:
                     attempts -= 1
-                    # ansHex += [chSim(hex(ord(x))[2:]) for x in ansChr]  #
-                    # cmdRX = [ansHex, ansChr, len(ansHex)]
-                    # logging.debug(u'RX <<< %s <<<>>> %s [%s]' % (" ".join(cmdRX[0]), cmdRX[1], str(cmdRX[2])))
-                    # ansChr=''#!!!!!!!!!!!!!
-                    
                     if attempts>0:
                         logging.error(u'Осталось попыток запроса: %d' % attempts)
                     else:
                         logging.error(u'Количество попыток запроса исчерпано!')
                         break
-
-            '''
-            if self.RX_check(ansChr, crcCheck, ansChLine):
-                attempts = 0
-                answer = ansHex
-            else:
-                attempts -= 1
-                timeO = 0
-                answer = False
-            '''
         else:
             attempts = 0
             answer = True
@@ -127,7 +107,6 @@ class TCPChannel(object):
         
         totalsent = 0
         while totalsent < len(cmd):
-            #print len(cmd)
             sent = self.sock.send(cmd[totalsent:])
             if sent == 0:
                 raise RuntimeError("socket connection broken")
@@ -141,62 +120,6 @@ class TCPChannel(object):
         try:
             self.sock.settimeout(self.whTimeout)
             chunk = self.sock.recv(1024)
-            #self.sock.settimeout(None)
         except socket.error, e:
             logging.error(u'Нет ответа на запрос! Причина: %s' % e)
         return chunk
-        
-        
-        
-        '''
-        ansChr = ''
-        ansHex = []
-        answer = []
-        
-        attempts = 3
-        while True and attempts>0:
-            try:
-                self.sock.settimeout(self.whTimeout)
-                
-                ansChr = self.sock.recv(1024)
-                
-                
-                
-                #Реализация для СЕ, предпоследний символ 03 ETX
-                if crcCheck:
-                    ansHex += [chSim(hex(ord(x))[2:]) for x in ansChr]
-                    if ansHex[-2]=='03':
-                        if self.CRC.check(ansChr):
-                            attempts = 0
-                            ansHex += [chSim(hex(ord(x))[2:]) for x in ansChr]
-                            answer = ansHex
-                            cmdRX = [ansHex, ansChr, len(ansHex)]
-                            if self.asciiOutput:
-                                logging.debug(u'RX <<< %s <<<>>> %s [%d]' % (" ".join(cmdRX[0]), cmdRX[1], cmdRX[2]))
-                            else:
-                                    logging.debug(u'RX <<< %s [%d]' % (" ".join(cmdRX[0]), cmdRX[2]))
-                            break
-                        else:
-                            logging.error(u'Ошибка CRC! Проверка CRC: %s' % str(self.CRC.check(ansChr)))
-                            break
-                            answer = False
-                        
-                else:
-                    ansHex += [chSim(hex(ord(x))[2:]) for x in ansChr]
-                    answer = ansHex
-                    cmdRX = [ansHex, ansChr, len(ansHex)]
-                    if self.asciiOutput:
-                        logging.debug(u'RX <<< %s <<<>>> %s [%d]' % (" ".join(cmdRX[0]), cmdRX[1], cmdRX[2]))
-                    else:
-                        logging.debug(u'RX <<< %s [%d]' % (" ".join(cmdRX[0]), cmdRX[2]))
-                    break
-                
-            except socket.error, e:
-                logging.error(u'Нет ответа на запрос! Причина: %s' % e)
-                #attempts -= 1
-                answer = False
-                break
-        
-        
-        return answer
-        '''
