@@ -2,6 +2,23 @@
 # -*- coding: utf-8 -*-
 import time
 from datetime import datetime, timedelta
+import MySQLdb
+import MySQLdb.cursors
+
+
+def get_db():
+    con = MySQLdb.connect(host='localhost',
+                            user='webse',
+                            passwd='webse',
+                            db='webse',
+                            cursorclass=MySQLdb.cursors.DictCursor)
+    cur = con.cursor()
+
+    con.set_character_set('utf8')
+    cur.execute('SET NAMES utf8;')
+    cur.execute('SET CHARACTER SET utf8;')
+    cur.execute('SET character_set_connection=utf8;')
+    return cur, con
 
 def chSim(sim):
     sim = sim
@@ -33,16 +50,16 @@ def dateListPP(depth):
     dateList = []
     Now = datetime.now()
     if Now.minute > 30:
-        firstVal = Now.strftime('%d.%m.%y %H:')+'30:00'
+        firstVal = Now.strftime('%Y-%m-%d %H:')+'30:00'
         dateList.append(firstVal)
-        nextVal = datetime.strptime(firstVal, '%d.%m.%y %H:%M:%S')
+        nextVal = datetime.strptime(firstVal, '%Y-%m-%d %H:%M:%S')
     else:
-        firstVal = Now.strftime('%d.%m.%y %H:')+'00:00'
+        firstVal = Now.strftime('%Y-%m-%d %H:')+'00:00'
         dateList.append(firstVal)
-        nextVal = datetime.strptime(firstVal, '%d.%m.%y %H:%M:%S')
+        nextVal = datetime.strptime(firstVal, '%Y-%m-%d %H:%M:%S')
     for i in xrange(depth):
         nextVal = nextVal - timedelta(minutes=30)
-        dateList.append(nextVal.strftime('%d.%m.%y %H:%M:%S'))
+        dateList.append(nextVal.strftime('%Y-%m-%d %H:%M:%S'))
     return dateList
 
 def monthList(depth):

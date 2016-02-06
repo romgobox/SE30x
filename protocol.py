@@ -118,7 +118,8 @@ class SE30X(object):
         Dict = False
         if dictType==0:
             try:
-                datenextday = (datetime.strptime(date, '%d.%m.%y') + timedelta(days=1)).strftime('%d.%m.%y')
+                # datenextday = (datetime.strptime(date, '%d.%m.%y') + timedelta(days=1)).strftime('%d.%m.%y')
+                datenextday = (datetime.strptime(date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
                 Dict = {
                         1: [date+' 00:30:00', 0.00],
                         2: [date+' 01:00:00', 0.00],
@@ -539,7 +540,8 @@ class SE30X(object):
         #ans = self.cmdWR(whPPValCmd, 'R1'+self.STX+'GRA'+EnergyType+'('+dateStrf+fromto+')'+self.ETX, ansChLine='GRA')
         
         PPV = False
-        PPDict = self.valueDict(date, dictType=0)
+        dateForDict = datetime.strptime(date, '%d.%m.%y').strftime('%Y-%m-%d')
+        PPDict = self.valueDict(dateForDict, dictType=0)
         if PPDict:
             pass
         else:

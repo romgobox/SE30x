@@ -20,11 +20,11 @@ class Algorithm(object):
             params = meter.parameters
             if meter.authCheckNum():
                 if params.get('fixDay'):
-                    depth = params['fixDay']['depth']
+                    depth = int(params['fixDay'])
                     dates = meter.checkValInDB(depth)
                     meter.getFixedValues(dates)
                 if params.get('ppValue'):
-                    depth = params['ppValue']['depth']
+                    depth = int(params['ppValue'])
                     meter.getppValueMap(depth)
                     dates = dateList(depth)
                     meter.getPPValues(dates)
