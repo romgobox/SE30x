@@ -45,6 +45,7 @@ def main():
     channels_sql = '''
                 SELECT id, ch_ip, ch_port 
                 FROM channels
+                WHERE is_activ=1
                 '''
     cur, con = get_db()
     cur.execute(channels_sql)
