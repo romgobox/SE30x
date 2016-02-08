@@ -21,12 +21,12 @@ class Algorithm(object):
             if meter.authCheckNum():
                 if params.get('fixDay'):
                     depth = int(params['fixDay'])
-                    dates = meter.checkValInDB(depth)
+                    dates = meter.checkFixDayValInDB(depth)
                     meter.getFixedValues(dates)
                 if params.get('ppValue'):
                     depth = int(params['ppValue'])
                     meter.getppValueMap(depth)
-                    dates = dateList(depth)
+                    dates = meter.checkPPValueValInDB(depth)
                     meter.getPPValues(dates)
             meter.logOut()
         self.channel.terminate()
