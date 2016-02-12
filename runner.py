@@ -8,9 +8,9 @@ from algorithm import Algorithm
 
 
 def main():   
-    import pudb; pu.db
     algorithm = Algorithm(channels_id=[12, 9], alg_type='full')
     result = algorithm.requestResult
+    import pudb; pu.db
 
 if __name__ == '__main__':
     main()

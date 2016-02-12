@@ -23,11 +23,16 @@ class Algorithm(object):
         self.requestResult = self.runAlgorithm(self.alg_type)
 
     def runAlgorithm(self, alg_type):
+        result = None
         if alg_type == 'full':
             if self.channels_id:
                 for channel in self.channels_id:
                     self.getMetersByChannel(ch_id=channel)
                 self.fullAlgorithm()
+                self.saveValues('full')
+                result = self.serializeValues('full')
+
+        return result
 
     def fullAlgorithm(self):
         for channel, meters in self.metersMap.items():
@@ -49,7 +54,6 @@ class Algorithm(object):
                         meter.getPPValues(dates)
                 meter.logOut()
             channel.terminate()
-            import pudb; pu.db
 
     def getMetersByChannel(self, ch_id=None, channel=None):
         channel = channel or self.getChannel(ch_id)
@@ -94,3 +98,25 @@ class Algorithm(object):
         channel = channelFactory.getChannel()
         self.channels.append(channel)
         return channel
+
+    def saveValues(self, alg_type):
+        if alg_type == 'full':
+            for meters in self.metersMap.values():
+                for meter in meters:
+                    meter.saveFixDayValues()
+                    meter.saveppValues()
+
+
+    def serializeValues(self, alg_type):
+        if alg_type == 'full':
+            result = []
+            for meters in self.metersMap.values():
+                for meter in meters:
+                    row = {
+                        'id':meter.id,
+                        'fixDay':meter.fixDayValue,
+                        'ppValue':meter.ppValue
+                    }
+                    result.append(row)
+
+        return result
