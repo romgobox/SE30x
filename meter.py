@@ -49,11 +49,8 @@ class Meter(object):
                 self.fixDayValue[date] = value
             else:
                 self.fixDayValue[date] = None
-        # if meter.fixDayValue:
-        #     meter.saveFixDayValues()
 
     def getPPValues(self, dates):
-        # import pudb; pu.db
         for date in dates:
             value = self.protocol.whPPValue(self.adr, date=date)
             if value:
@@ -86,8 +83,6 @@ class Meter(object):
         for date in self.ppValueMap:
             value = self.ppValue.get(date)
             if value:
-                # dateP = datetime.strptime(date, '%d.%m.%y')
-                # dateval = datetime.strftime(dateP, '%d.%m.%Y %H:%M:%S')
                 dateval = date
                 now = datetime.now()
                 datercv = datetime.strftime(now, '%Y-%m-%d %H:%M:%S')

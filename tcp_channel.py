@@ -14,9 +14,25 @@ logging.basicConfig(format = u'%(filename)s[LINE:%(lineno)d]# %(levelname)-4s [%
 
 from utils import chSim, udate
 from CRC import CRC_SE3xx
+
+class ChannelFactory(object):
+    """ Фабрика каналов опроса"""
+
+    def __init__(self, id, ch_ip, ch_port, ch_type):
+        self.id = id
+        self.ch_ip = ch_ip
+        self.ch_port = ch_port
+        self.type = ch_type 
+        
+    def getChannel(self):
+        if self.type == 'TCPClient':
+            return TCPClient(address=self.ch_ip, port=self.ch_port, attempt = 3,  whTimeout=15)
+
+    def __repr__(self):
+        return '<channel ip: %s, port: %s>' % (str(self.ch_ip), self.ch_port)
     
     
-class TCPChannel(object):
+class TCPClient(object):
     
     def __init__(self, address, port, whTimeout = 5, attempt = 3, whRXTimeout=0.5):
         
