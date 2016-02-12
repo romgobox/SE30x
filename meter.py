@@ -1,11 +1,12 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
+import logging
 import MySQLdb
 import MySQLdb.cursors
 from utils import dateList, dateListPP, get_db
-
+logging.basicConfig(format = u'%(filename)s[LINE:%(lineno)d]# %(levelname)-4s [%(asctime)s] %(message)s', level = logging.DEBUG)
 
 class Meter(object):
     """Класс прибора учета"""
@@ -48,11 +49,8 @@ class Meter(object):
                 self.fixDayValue[date] = value
             else:
                 self.fixDayValue[date] = None
-        # if meter.fixDayValue:
-        #     meter.saveFixDayValues()
 
     def getPPValues(self, dates):
-        # import pudb; pu.db
         for date in dates:
             value = self.protocol.whPPValue(self.adr, date=date)
             if value:
@@ -70,15 +68,14 @@ class Meter(object):
                 datercv = datetime.strftime(now, '%Y-%m-%d %H:%M:%S')
                 sql = '''
                 INSERT INTO webse.values 
-                VALUES(
-                    Null, 
-                    {id}, 
-                    1, 
-                    '{datercv}', 
-                    '{dateval}', 
-                    {value})
+                VALUES(Null, {id}, 1, '{datercv}', '{dateval}', {value})
                 '''.format(id=self.id, datercv=datercv, dateval=dateval, value=value['Sum'])
-                cur.execute(sql)
+                try:
+                    cur.execute(sql)
+                    logging.debug(sql)
+                except Exception, e:
+                    logging.error('Не удалось сохранить зафиксированные значения. Причина: %s', e)
+
         con.commit()
 
     def saveppValues(self):
@@ -86,22 +83,20 @@ class Meter(object):
         for date in self.ppValueMap:
             value = self.ppValue.get(date)
             if value:
-                # dateP = datetime.strptime(date, '%d.%m.%y')
-                # dateval = datetime.strftime(dateP, '%d.%m.%Y %H:%M:%S')
                 dateval = date
                 now = datetime.now()
                 datercv = datetime.strftime(now, '%Y-%m-%d %H:%M:%S')
                 sql = '''
                 INSERT INTO webse.values 
-                VALUES(
-                    Null, 
-                    {id}, 
-                    2, 
-                    '{datercv}', 
-                    '{dateval}', 
-                    {value})
+                VALUES(Null, {id}, 2, '{datercv}', '{dateval}', {value})
                 '''.format(id=self.id, datercv=datercv, dateval=dateval, value=value)
-                cur.execute(sql)
+                try:
+                    cur.execute(sql)
+                    logging.debug(sql)
+                except Exception, e:
+                    logging.error('Не удалось сохранить получасовые значения. Причина: %s', e)
+            else:
+                del self.ppValue[date]
         con.commit()
 
     def getppValueMap(self, depth):
@@ -121,7 +116,31 @@ class Meter(object):
                 if row['count'] != 0:
                     self.ppValueMap.remove(date)
 
-    def checkValInDB(self, depth):
+    def checkPPValueValInDB(self, depth):
+        cur, con = get_db()
+        datesList = []
+        datesList = dateList(depth)
+        dates = []
+        for i, date in enumerate(datesList):
+            dateP = datetime.strptime(date, '%d.%m.%y')
+            datePnextDay = datetime.strptime(date, '%d.%m.%y') + timedelta(days=1)
+            dateval = datetime.strftime(dateP, '%Y-%m-%d')
+            datevalNextDay = datetime.strftime(datePnextDay, '%Y-%m-%d %H:%M:%S')
+            sql = '''
+            SELECT COUNT(datetime_value) count
+            FROM webse.values
+            WHERE
+                meter_id={id} AND
+                param_num={param_num} AND
+                (DATE(datetime_value)='{date}' OR datetime_value='{datevalNextDay}')
+            '''.format(id=self.id, date=dateval, datevalNextDay=datevalNextDay, param_num=2)
+            cur.execute(sql)
+            for row in cur.fetchall():
+                if row['count'] != 49:
+                    dates.append(date)
+        return dates
+
+    def checkFixDayValInDB(self, depth):
         # import pudb; pu.db
         cur, con = get_db()
         datesList = []
