@@ -3,14 +3,24 @@
 import time
 from datetime import datetime
 import json
+import gevent.monkey
+gevent.monkey.patch_socket()
 
 from algorithm import Algorithm
 
+def alg_run(channel):
+    algorithm = Algorithm(channels_id=[channel], alg_type='full')
+    return algorithm.requestResult
 
 def main():   
-    algorithm = Algorithm(channels_id=[12, 9], alg_type='full')
-    result = algorithm.requestResult
-    import pudb; pu.db
+    channels = [11,9]
+    result = []
+    requests = [gevent.spawn(alg_run, channel) for channel in channels]
+    gevent.joinall(requests)
+    for greenlet in requests:
+        result.append(greenlet.value)
+    return result
 
 if __name__ == '__main__':
-    main()
+    result = main()
+    import pudb; pu.db
