@@ -26,7 +26,7 @@ class ChannelFactory(object):
         
     def getChannel(self):
         if self.type == 'TCPClient':
-            return TCPClient(address=self.ch_ip, port=self.ch_port, attempt = 3,  whTimeout=15)
+            return TCPClient(id=self.id, address=self.ch_ip, port=self.ch_port, attempt = 3,  whTimeout=15)
 
     def __repr__(self):
         return '<channel ip: %s, port: %s>' % (str(self.ch_ip), self.ch_port)
@@ -34,8 +34,9 @@ class ChannelFactory(object):
     
 class TCPClient(object):
     
-    def __init__(self, address, port, whTimeout = 5, attempt = 3, whRXTimeout=0.5):
+    def __init__(self, id, address, port, whTimeout = 5, attempt = 3, whRXTimeout=0.5):
         
+        self.id = id
         self.whTimeout = whTimeout
         self.attempt = attempt
         self.whRXTimeout = whRXTimeout
